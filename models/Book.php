@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\services\SmsService;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
