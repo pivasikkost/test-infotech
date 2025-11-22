@@ -20,7 +20,7 @@ class AuthorController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'subscribe'],
+                        'actions' => ['index', 'view', 'subscribe', 'top'],
                         'allow' => true,
                         'roles' => ['?', '@'], // Гости и пользователи
                     ],
@@ -104,6 +104,21 @@ class AuthorController extends Controller
         $model->delete();
         Yii::$app->session->setFlash('success', 'Автор успешно удален.');
         return $this->redirect(['index']);
+    }
+
+    public function actionTop($year = null)
+    {
+        $year = $year ? (int)$year : date('Y');
+        if ($year < 1900 || $year > date('Y')) {
+            $year = date('Y');
+        }
+
+        $top = Author::getTop($year, 10);
+
+        return $this->render('top', [
+            'top' => $top,
+            'year' => $year,
+        ]);
     }
 
     public function actionSubscribe($author_id)

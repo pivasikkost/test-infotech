@@ -24,7 +24,7 @@ class BookController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'top-authors'],
+                        'actions' => ['index', 'view'],
                         'allow' => true,
                         'roles' => ['?', '@'], // Разрешить гостям и пользователям
                     ],
@@ -117,21 +117,6 @@ class BookController extends Controller
 
         Yii::$app->session->setFlash('success', 'Изображение успешно удалено.');
         return $this->redirect(['update', 'id' => $model->id]);
-    }
-
-    public function actionTopAuthors($year = null)
-    {
-        $year = $year ? (int)$year : date('Y');
-        if ($year < 1900 || $year > date('Y')) {
-            $year = date('Y');
-        }
-
-        $topAuthors = Author::getTop($year, 10);
-
-        return $this->render('top-authors', [
-            'topAuthors' => $topAuthors,
-            'year' => $year,
-        ]);
     }
 
     protected function findModel($id)
