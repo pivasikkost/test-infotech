@@ -42,14 +42,20 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'authors' => 'author/index',
+                'author/<id:\d+>' => 'author/view',
+                'author/subscribe/<author_id:\d+>' => 'author/subscribe',
+                'top-authors' => 'book/top-authors',
             ],
         ],
-        */
+        'smsService' => [
+            'class' => 'app\services\SmsService',
+            'testMode' => true, // В продакшене установить false
+        ],
     ],
     'params' => $params,
 ];
