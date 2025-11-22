@@ -30,7 +30,7 @@ class AuthorSearch extends Author
                 'author.*',
                 'COUNT(book_author.book_id) as book_count'
             ])
-            ->joinWith('bookAuthors')
+            ->leftJoin('book_author', 'book_author.author_id = author.id')
             ->groupBy('author.id');
 
         $dataProvider = new ActiveDataProvider([
@@ -48,21 +48,22 @@ class AuthorSearch extends Author
             ],
         ]);
 
+        // Важно: после создания dataProvider загружаем параметры
         $this->load($params);
 
         if (!$this->validate()) {
+            // Отключаем фильтрацию если валидация не прошла
+            $query->where('0=1');
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'author.id' => $this->id,
-        ]);
-
-        $query->andFilterWhere(['like', 'author.full_name', $this->full_name]);
+        // Фильтрация
+        $query->andFilterWhere(['author.id' => $this->id])
+            ->andFilterWhere(['like', 'author.full_name', $this->full_name]);
 
         // Фильтр по количеству книг
         if ($this->bookCount !== null && $this->bookCount !== '') {
-            $query->having(['book_count' => $this->bookCount]);
+            $query->andHaving(['book_count' => $this->bookCount]);
         }
 
         return $dataProvider;

@@ -130,8 +130,8 @@ class BookController extends Controller
                 'author.*',
                 'COUNT(book_author.book_id) as book_count'
             ])
-            ->innerJoinWith('bookAuthors')
-            ->innerJoinWith('books')
+            ->innerJoin('book_author', 'book_author.author_id = author.id')
+            ->innerJoin('book', 'book.id = book_author.book_id')
             ->where(['book.year' => $year])
             ->groupBy('author.id')
             ->orderBy(['book_count' => SORT_DESC])

@@ -18,7 +18,6 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -32,9 +31,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'book_count',
                 'label' => 'Количество книг',
                 'value' => function ($model) {
-                    return $model->books ? count($model->books) : 0;
+                    return $model->book_count ?: 0;
                 },
-                'filter' => false,
+                'filter' => Html::input('number', 'AuthorSearch[bookCount]',
+                    $searchModel->bookCount,
+                    ['class' => 'form-control', 'min' => 0]
+                ),
             ],
             [
                 'attribute' => 'books',

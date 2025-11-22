@@ -14,9 +14,15 @@ use yii\db\ActiveRecord;
  *
  * @property BookAuthor[] $bookAuthors
  * @property Book[] $books
+ * @property int $book_count Виртуальное свойство для количества книг
  */
-class Author extends ActiveRecord
+class Author extends \yii\db\ActiveRecord
 {
+    /**
+     * @var int Виртуальное свойство для количества книг
+     */
+    public $book_count;
+
     public static function tableName()
     {
         return 'author';
@@ -40,6 +46,7 @@ class Author extends ActiveRecord
         return [
             [['full_name'], 'required'],
             [['full_name'], 'string', 'max' => 255],
+            [['book_count'], 'safe'], // Добавляем book_count в правила
         ];
     }
 
@@ -48,6 +55,7 @@ class Author extends ActiveRecord
         return [
             'id' => 'ID',
             'full_name' => 'ФИО',
+            'book_count' => 'Количество книг',
         ];
     }
 
@@ -73,5 +81,26 @@ class Author extends ActiveRecord
     public function getSubscriptions()
     {
         return $this->hasMany(AuthorSubscription::class, ['author_id' => 'id']);
+    }
+
+    /**
+     * Получает количество книг автора
+     * @return int
+     */
+    public function getBooksCount()
+    {
+        return $this->getBooks()->count();
+    }
+
+    /**
+     * После поиска устанавливаем book_count для каждого автора
+     */
+    public function afterFind()
+    {
+        parent::afterFind();
+        // Если свойство не было установлено через JOIN, вычисляем его
+        if ($this->book_count === null) {
+            $this->book_count = $this->getBooksCount();
+        }
     }
 }
