@@ -121,22 +121,12 @@ class BookController extends Controller
 
     public function actionTopAuthors($year = null)
     {
-        if (!$year) {
+        $year = $year ? (int)$year : date('Y');
+        if ($year < 1900 || $year > date('Y')) {
             $year = date('Y');
         }
 
-        $topAuthors = Author::find()
-            ->select([
-                'author.*',
-                'COUNT(book_author.book_id) as book_count'
-            ])
-            ->innerJoin('book_author', 'book_author.author_id = author.id')
-            ->innerJoin('book', 'book.id = book_author.book_id')
-            ->where(['book.year' => $year])
-            ->groupBy('author.id')
-            ->orderBy(['book_count' => SORT_DESC])
-            ->limit(10)
-            ->all();
+        $topAuthors = Author::getTop($year, 10);
 
         return $this->render('top-authors', [
             'topAuthors' => $topAuthors,

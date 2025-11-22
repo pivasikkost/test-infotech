@@ -84,6 +84,25 @@ class Author extends \yii\db\ActiveRecord
     }
 
     /**
+     * Получает ТОП авторов за год
+     */
+    public static function getTop($year, $limit = 10)
+    {
+        return self::find()
+            ->select([
+                'author.*',
+                'COUNT(book_author.book_id) as book_count'
+            ])
+            ->innerJoin('book_author', 'book_author.author_id = author.id')
+            ->innerJoin('book', 'book.id = book_author.book_id')
+            ->where(['book.year' => $year])
+            ->groupBy('author.id')
+            ->orderBy(['book_count' => SORT_DESC])
+            ->limit($limit)
+            ->all();
+    }
+
+    /**
      * Получает количество книг автора
      * @return int
      */
