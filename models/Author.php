@@ -99,6 +99,7 @@ class Author extends \yii\db\ActiveRecord
             ->groupBy('author.id')
             ->orderBy(['book_count' => SORT_DESC])
             ->limit($limit)
+            ->cache(60)
             ->all();
     }
 
